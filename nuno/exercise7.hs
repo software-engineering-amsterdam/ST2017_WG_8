@@ -57,23 +57,44 @@ isMaster n =
         luhnAlg n
 
 -- Tests: Adding any number except 5 to any digit of a valid number will always result in an invalid number
---          373456789012344 is a valid american express number
+--          373456789012344  is a valid american express card number
+--          4512619341241    is a valid visa card number
+--          5125192582591255 is a valid master card number
 
 -- Generate good n's to test. We dont want n to be either 0 or 5, otherwise it could generate valid numbers
-goodNs :: Integer -> Integer
+goodNs :: Int -> Int
 goodNs n = let n1 = mod n 10 in if elem n1 [0,5] then n1+1 else n1
 
-checkIfInvalidAmExAux :: Integer -> [Integer] -> Bool
-checkIfInvalidAmExAux n (x:xs) = True
+checkIfInvalidCard :: (Integer -> Bool) -> Int -> [Integer] -> [Integer] -> Bool
+checkIfInvalidCard _ _ _ [] = True
+checkIfInvalidCard prop toAdd validNumber (i:rest) = not (prop (convertDigitsToNumber ((take (fromIntegral i) validNumber) ++ 
+                                                                                                [validNumber!!(fromIntegral i) + 2] ++ 
+                                                                                                drop (fromIntegral (i+1)) validNumber )))
+                                                && checkIfInvalidCard prop toAdd validNumber rest
 
 -- Check if by adding number n to any digit of a valid number results in an invalid number as it should
-checkIfInvalidAmEx :: Integer -> Bool
-checkIfInvalidAmEx n = checkIfInvalidAmExAux n (convertNumberToDigits 373456789012344)
+checkIfInvalidAmEx :: Int -> Bool
+checkIfInvalidAmEx n = checkIfInvalidCard isAmericanExpress n (convertNumberToDigits 373456789012344) [0..14]
 
-exerciseSevenAmEx :: [Integer] -> Bool
+checkIfInvalidVisa :: Int -> Bool
+checkIfInvalidVisa n = checkIfInvalidCard isVisa n (convertNumberToDigits 373456789012344) [0..14]
+
+checkIfInvalidMaster :: Int -> Bool
+checkIfInvalidMaster n = checkIfInvalidCard isMaster n (convertNumberToDigits 373456789012344) [0..14]
+
+exerciseSevenAmEx :: [Int] -> Bool
 exerciseSevenAmEx xs = (isAmericanExpress 373456789012344) && all checkIfInvalidAmEx (map goodNs xs )
 
-main = quickCheck exerciseSevenAmEx
+exerciseSevenVisa :: [Int] -> Bool
+exerciseSevenVisa xs = (isVisa 4512619341241) && all checkIfInvalidVisa (map goodNs xs)
+
+exerciseSevenMaster :: [Int] -> Bool
+exerciseSevenMaster xs = (isMaster 5125192582591255) && all checkIfInvalidMaster (map goodNs xs)
+
+--main = print (isAmericanExpress 373456789012344) -- returns True
+--main = print (isVisa 4512619341241) -- returns True
+--main = print (isMaster 5125192582591255) -- returns True
+main = quickCheck exerciseSevenMaster
 
 --time 1h30m
 -- not done yet
