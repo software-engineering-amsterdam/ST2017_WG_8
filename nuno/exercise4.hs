@@ -1,3 +1,4 @@
+module Lab1 where
 import Data.List
 import Test.QuickCheck  
 
@@ -14,12 +15,18 @@ reversal = read . reverse . show
 isReversal :: Integer -> Bool
 isReversal n = n == reversal n
 
+
 findSpecialPrimes :: Integer -> [Integer]
 findSpecialPrimes n = filter prime (filter isReversal [2..n])
 
+-- To test the reversal function I could check if the reverse of the reverse of a number is the same number as the original
+	-- This wouldn't work for n = 10 because the reversal of that n is 01 = 1, and the reversal of 1 is 1 != 10. 
+	-- That's why I use numbers that are not multiples of 10 (last digit is not zero)
+goodNForReversal :: Integer -> Bool
+goodNForReversal n = mod n 10 != 0
+
+testreverse = \ n -> goodNForReversal n ==> reversal ( reversal n) == n
+
 main                = print (findSpecialPrimes 10000)
 
--- To test the reversal function I would have to be able to check if the function was giving the correct results for a certain number. But that means
--- 			I had to program another reversal function to test this reversal function. If the tests would all pass, it could be that my function
--- 			was as incorrectly implemented as the first reversal function.
 --time: 4 minutes
