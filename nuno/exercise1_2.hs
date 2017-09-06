@@ -1,3 +1,5 @@
+module Lab1 where
+import Data.List
 import Test.QuickCheck  
 
 --Instead of discarding tests, make good n's out of the bad ones
