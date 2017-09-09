@@ -31,3 +31,5 @@ honest :: [Boy]
 honest = nub [x | x <- boys, y <- guilty, z <- notGuilty, accuses x y && not (accuses x z)]
 
 main = print honest
+
+--time: 30 minutes

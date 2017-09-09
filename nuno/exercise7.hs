@@ -97,5 +97,4 @@ exerciseSevenMaster xs = (isMaster 5125192582591255) && all checkIfInvalidMaster
 --main = print (isMaster 5125192582591255) -- returns True
 main = quickCheck exerciseSevenMaster
 
---time 1h30m
--- not done yet
+--time: 1h30m
