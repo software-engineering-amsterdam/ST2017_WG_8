@@ -2,7 +2,7 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck  
 
--- Assignment 8 #Time: 90 mins
+-- Assignment 8 #Time: 30 mins
 
 data Boy = Matthew | Peter | Jack | Arnold | Carl 
         deriving (Eq,Show)
