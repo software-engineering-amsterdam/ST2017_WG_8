@@ -2,6 +2,8 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
+-- Assignment 5 #Time: 30 mins
+
 prime :: Integer -> Bool
 prime n = n > 1 && all (\ x -> rem n x /= 0) xs
   where xs = takeWhile (\ y -> y^2 <= n) primes

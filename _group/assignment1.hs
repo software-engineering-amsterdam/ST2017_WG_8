@@ -2,7 +2,7 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
--- Assignment 1
+-- Assignment 1 #Time: 15 mins
 
 infix 1 --> 
  

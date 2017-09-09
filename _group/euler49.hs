@@ -2,6 +2,8 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck  
 
+-- Assignment euler49 #Time: 45 mins
+
 convertToDigits :: Integer -> [Integer]
 convertToDigits 0 = []
 convertToDigits n = convertToDigits (div n 10) ++ [(mod n 10)]

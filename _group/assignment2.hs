@@ -2,6 +2,8 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
+-- Assignment 2 #Time: 20 mins
+
 -- The property is hard to test because for a big integer n, the subsequence [1..n] is gigantic (2^n in length accordingly to the statement), 
 --        thus it takes time to make the subsequence list or even count its length making the property hard to test, 
 --        or even computationally impossible for relatively big n's.

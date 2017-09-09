@@ -2,6 +2,7 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
+-- Assignment 3 #Time: 7 mins
 
 -- The property is hard to test because calculating the number of permutations of a set of length n is O(n!), 
 -- being computationally infeasible to calculate it for big n's

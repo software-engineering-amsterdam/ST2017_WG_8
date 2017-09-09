@@ -2,6 +2,8 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck  
 
+-- Assignment 7 #Time: 90 mins
+
 -- Convert a number to a list of digits to be easier to apply the formula
 convertNumberToDigits :: Integer -> [Integer]
 convertNumberToDigits 0 = []
