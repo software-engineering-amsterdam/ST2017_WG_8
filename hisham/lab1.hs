@@ -66,6 +66,16 @@ reversalPrimes = takeWhile (<10000) $ filter (prime.reversal) primes
 
 
 -- Assignment 6 [2 hours]
+pConGen :: Int -> [a] -> [[a]]
+pConGen x l = (take x l) : pConGen (x+1) l
 
+pConSum :: [Integer]
+pConSum = head (filter (not.prime.(+1).product) (pConGen 1 primes))
+
+tsum :: Integer
+tsum = (product pConSum) + 1
+
+counterExampleConjecture :: ([Integer], Integer)
+counterExampleConjecture = (pConSum, tsum)
 
 -- Assignment 7
