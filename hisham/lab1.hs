@@ -62,8 +62,17 @@ reversalPrimes :: [Integer]
 reversalPrimes = takeWhile (<10000) $ filter (prime.reversal) primes
 
 
--- Assignment 5
+-- Assignment 5 [1 hour]
 
+cp xs =
+    if (prime sumSection)
+    then
+      sumSection
+    else cp (tail xs)
+    where
+        sumSection = sum (take 101 xs)
+
+consecutivePrimes = cp primes
 
 -- Assignment 6 [2 hours]
 pConGen :: Int -> [a] -> [[a]]
