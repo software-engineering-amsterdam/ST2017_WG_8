@@ -18,7 +18,8 @@ forall = flip all
 
 
 -------------------------------------------------------------------------------------
--- 1. a
+-- 1. a Time spent: ~ 15 minutes
+
 left1, right1 :: Int -> Int
 left1 = \x -> sum(map (^2) [0..x])
 right1 = \x -> (((x*(x+1)) * (2*x+1)) `div` 6)
@@ -29,7 +30,8 @@ check1a = quickCheck (\x -> x >= 0 --> left1 x == right1 x)
 -- main = check1a
 
 -------------------------------------------------------------------------------------
--- 1. b
+-- 1. b Time spent: ~ 15 minutes
+
 left2, right2 :: Int -> Int
 left2 = \x -> sum(map (^3) [0..x])
 right2 = \x -> ((x*(x+1))`div` 2)^2
@@ -40,7 +42,8 @@ check1b = quickCheck (\x -> x >= 0 --> left2 x == right2 x)
 -- main = check1b
 
 -------------------------------------------------------------------------------------
--- 2.
+-- 2. Time spent: ~ 15 minutes
+
 listLength :: Int -> Int
 listLength = \x -> 2^(length [1..x])
 subsets :: Int -> Int
@@ -59,7 +62,8 @@ check2lim = quickCheck (\x -> x <= 20 --> listLength x == subsets x)
 -}
 
 -------------------------------------------------------------------------------------
--- 3.
+-- 3. Time spent: ~ 15 minutes
+
 perms :: [a] -> [[a]]
 perms [] = [[]]
 perms (x:xs) = concat (map (insrt x) (perms xs)) where
@@ -84,7 +88,7 @@ check3lim = quickCheck (\x -> x <= 10 --> length(perms[1..x])  == factorial x)
 
 
 -------------------------------------------------------------------------------------
--- 4.
+-- 4. Time spent: ~ 30 minutes
 reversal :: Integer -> Integer
 reversal = read . reverse . show
 
@@ -98,7 +102,7 @@ reversePrimes = takeWhile (< 10000) (filter (\x -> prime (reversal x)) primes)
 -- main = reversal check, reversePrimes
 
 -------------------------------------------------------------------------------------
--- 5.
+-- 5. Time spent: ~ 30 minutes
 
 nextPrime :: Integer -> Integer
 nextPrime x = if prime (x+1) then (x+1) else nextPrime(x+1)
@@ -118,7 +122,7 @@ checkAndSlide x = if prime(sum(x)) then (sum(x),x) else checkAndSlide(slideRange
 -- main = checkAndSlide first101
 
 -------------------------------------------------------------------------------------
--- 6.
+-- 6. Time spent: ~ 1 hour
 
 -- Create a list of consecuitve primes up to 'x'
 limitedPrimes :: Integer -> [Integer]
@@ -140,7 +144,7 @@ smallestTrue = take 1 (filter (\x -> statement x == False) primes)
 -- main = print(smallestTrue)
 
 -------------------------------------------------------------------------------------
--- 7.
+-- 7. Time spent: ~ 2 hours
 
 -- First produces a list of digits in reversed order (1024 -> [4, 2, 0, 1])
 intToDigits :: Integer -> [Integer]
@@ -181,11 +185,12 @@ isMaster x | luhn x && checkDigits x [2221..2720] 4 = True
 isVisa x = luhn x && checkDigits x [4] 1
 
 
--- I based the quickCheck on Nuno's assumption that adding a number other than 0 or 5 to any digit of a valid number will always result in an invalid number
+-- A list of a few valid card numbers (all of them are either American Express, Mastercard, or Visa) 
+validCards = [4111111111111111, 5500000000000004, 340000000000009, 378282246310005, 371449635398431, 5555555555554444, 5105105105105100, 4012888888881881, 4222222222222]
 
--- Three valid card numbers (Visa, Master, American Express) 
---validCards = [4111111111111111, 5500000000000004, 340000000000009]
---check7 = quickCheck ()
+
+check7 = quickCheck (all luhn validCards)
+
 
 -- Result 7: 
 -- main = print(luhn <card number>)
@@ -196,7 +201,8 @@ isVisa x = luhn x && checkDigits x [4] 1
 
 
 -------------------------------------------------------------------------------------
--- 8.
+-- 8. Time spent: ~ 2 hours
+
 data Boy = Matthew | Peter | Jack | Arnold | Carl 
             deriving (Eq,Show)
  
@@ -238,7 +244,7 @@ honest = nub [x | x <- boys, y <- guilty, z <- notGuilty, accuses x y && not (ac
 
 
 -------------------------------------------------------------------------------------
--- Bonus 2.
+-- Bonus 2. Time spent: ~ 10 minutes
 
 primeSum = sum(takeWhile( < 2000000) primes)
 
@@ -250,4 +256,4 @@ primeSum = sum(takeWhile( < 2000000) primes)
 -- Bonus 2.
 
 
-main = print(primeSum)
+main = print("Please check individual excercises for the results by uncommenting the appropriate lines of code")
