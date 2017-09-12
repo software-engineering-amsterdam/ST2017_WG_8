@@ -17,6 +17,8 @@ probs n = do
              ps <- probs (n-1) 
              return (p:ps)
 
+data Shape = NoTriangle | Equilateral 
+           | Isosceles  | Rectangular | Other deriving (Eq,Show)
 
 --Assignment 1: Time: 2,5 hours
 quartiles :: [Float] -> [Int]
@@ -30,3 +32,33 @@ quartiles xs = [f1 xs, f2 xs, f3 xs, f4 xs]
 testQuartiles = do
     n <- probs 10000
     putStrLn (show (quartiles n))
+
+
+--Assignment 2: Time: 2,5 hours
+triangle :: Integer -> Integer -> Integer -> Shape
+triangle a b c | isNoTriangle a b c = NoTriangle 
+               | isTriangle a b c && isEquilateral a b c = Equilateral
+               | isTriangle a b c && isIsosceles a b c = Isosceles
+               | isTriangle a b c && isRectangular a b c = Rectangular
+               | otherwise = Other
+
+
+--
+isTriangle :: Integer -> Integer -> Integer -> Bool
+isTriangle a b c = a+b>c && a+c>b && b+c>a
+
+--
+isNoTriangle :: Integer -> Integer -> Integer -> Bool
+isNoTriangle a b c = not $ a+b>c && a+c>b && b+c>a
+
+-- An equilateral triangle has all sides the same length
+isEquilateral :: Integer -> Integer -> Integer -> Bool
+isEquilateral a b c = a==b && b==c
+
+-- An isosceles triangle has two sides of equal length
+isIsosceles :: Integer -> Integer -> Integer -> Bool
+isIsosceles a b c = a==b || a==c || b==c
+
+--
+isRectangular :: Integer -> Integer -> Integer -> Bool
+isRectangular a b c = a^2+b^2==c^2 || a^2+c^2==b^2 || b^2+c^2==a^2
