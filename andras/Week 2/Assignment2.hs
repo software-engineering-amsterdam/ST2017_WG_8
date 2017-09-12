@@ -12,6 +12,22 @@ p --> q = (not p) || q
 forall :: [a] -> (a -> Bool) -> Bool
 forall = flip all
 
+getRandomInt :: Int -> IO Int
+getRandomInt n = getStdRandom (randomR (0,n))
+
+getIntL :: Int -> Int -> IO [Int]
+getIntL _ 0 = return []
+getIntL k n = do 
+   x <-  getRandomInt k
+   xs <- getIntL k (n-1)
+   return (x:xs)
+
+genIntList :: Int -> Int -> IO [Int]
+genIntList kRange nRange = do 
+  k <- getRandomInt kRange
+  n <- getRandomInt nRange
+  getIntL k n
+
 -----------------------------------------------------------------------------------------
 -- 1. Time spent: ~ 25 minutes (of which 15 minutes was fighting with IO [Float ])
 
@@ -141,20 +157,49 @@ Weak
 
 
 -----------------------------------------------------------------------------------------
--- 4. Time spent: ~ 40 minutes
--- TODO: Properties, tests
+-- 4. Time spent: ~ 1 hour
 
 isPermutation :: Eq a => [a] -> [a] -> Bool
 isPermutation [] [] = True
-isPermutation x y = (length [x] == length [y]) && (all (\z -> z `elem` y) x) 
+isPermutation x y = elem x (permutations y)
 
 
+-- A permutation of a list is always the same length as the original list 
+property41 :: [Int] -> Bool 
+property41 x = length x == length(head(permutations x))
+
+-- Permutation is reflexive, list is always a permutation of itself
+property42 :: [Int] -> Bool 
+property42 x = isPermutation x x
+
+-- Permutation is symmetric, if A is a permutation of B then B is a permutation of A
+property43 :: [Int] -> Bool
+property43 x = isPermutation x (head(permutations x)) --> isPermutation (head(permutations x)) x
+
+
+testR1 :: Int -> Int -> ([Int] -> Bool) -> IO ()
+testR1 k n f = if k == n then print (show n ++ " tests passed")
+                else do
+                  xs <- genIntList 20 10
+                  if (f xs) then
+                    testR1 (k+1) n f
+                  else error ("failed: " ++ show xs)
+
+checkBatch4 :: IO()
+checkBatch4 = do
+    print("Testing property 1")
+    testR1 0 100 property41
+    print("Testing property 2")
+    testR1 0 100 property42
+    print("Testing property 3")
+    testR1 0 100 property43
+
+-- Result 4:
 -- main = print(isPermutation [1, 2, 3] [3, 1, 2])
-
+-- main = checkBatch4
 
 -----------------------------------------------------------------------------------------
--- 5. Time spent: ~ 40 minutes
--- TODO: Properties, QuickCheck
+-- 5. Time spent: ~ 1 hour
 
 isDerangement :: Eq a => [a] -> [a] -> Bool
 isDerangement [] [] = False
@@ -169,9 +214,39 @@ deran :: Eq a => [a] -> [[a]]
 deran [] = []
 deran x = filter (\y -> isDerangement x y) (permutations x)
 
+-- A list can't be its own derangement
+property51 :: [Int] -> [Int] -> Bool
+property51 x y = isDerangement x y --> not(x == y)
+
+-- Derangement is symmetric, if A is a derangement of B then B is a derangement of A
+property52 :: [Int] -> [Int] -> Bool
+property52 x y = isDerangement x y --> isDerangement y x
+
+
+testR2 :: Int -> Int -> ([Int] -> [Int] -> Bool) -> IO ()
+testR2 k n f = if k == n then print (show n ++ " tests passed")
+                else do
+                  x <- genIntList 20 10
+                  y <- genIntList 20 10
+                  if (f x y) then
+                    testR2 (k+1) n f
+                  else error ("failed: " ++ show x ++ show y)
+
+checkBatch5 :: IO()
+checkBatch5 = do
+    print("Testing property 1")
+    testR2 0 100 property51
+    print("Testing property 2")
+    testR2 0 100 property52
+
+
+
+
 -- Result 5:
 -- main = print(isDerangement <list> <list>)
 -- main = print(deran <list>)
+-- main = checkBatch5
+
 
 -----------------------------------------------------------------------------------------
 -- 6. Time spent: ~ 30 minutes
@@ -179,26 +254,44 @@ deran x = filter (\y -> isDerangement x y) (permutations x)
 
 -- To turn a char into its ROT13 equivalent I just map it from one list to the other
 -- The '#' at the end of both list is for invalid (non-alphabetical) chars
-normalAlph = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#"
-rot13Alph  = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm#"
+normalAlph = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+rot13Alph  = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm"
 
--- If any char of the input string is not a letter, we replace it with '#'
-sanitizeString :: String -> String
-sanitizeString s = [(if notElem c normalAlph then '#' else c) | c <- s]
 
 -- Turn a char into its ROT13 equivalent
 findRot :: Char -> Char
-findRot c = rot13Alph!!(head(elemIndices c normalAlph))
+findRot c | notElem c normalAlph = c
+          | otherwise = rot13Alph!!(head(elemIndices c normalAlph))
 
 -- Transform each char of the input String
 sentanceToRot :: String -> String
 sentanceToRot s = [findRot c | c <- s]
 
+
+
+-- A ROT13 transformation of a ROT13 transformed string is the original string
+property61 :: String -> Bool
+property61 s = sentanceToRot( sentanceToRot s) == s
+
+
+-- A ROT13 transformed string has the same length as the original string
+property62 :: String -> Bool
+property62 s = length s == length (sentanceToRot s)
+
+checkBatch6 :: IO()
+checkBatch6 = do
+    print("Testing property 1")
+    quickCheck property61
+    print("Testing property 2")
+    quickCheck property62
+
 -- Result 6:
--- main = print(sentanceToRot(sanitizeString <String>))
+-- main = print(sentanceToRot <String>)
+-- main = checkBatch6
 
 -----------------------------------------------------------------------------------------
 -- 7. Time spent: ~ 50 minutes
+-- TODO: Test with incorrect examples
 
 alph = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -220,4 +313,21 @@ iban s = (length s <= 34) && (read(convertLetters(move4(s))) `mod` 97 == 1)
 
 validIbans = ["AL47212110090000000235698741", "AD1200012030200359100100", "AT611904300234573201", "AZ21NABZ00000000137010001944", "BH67BMAG00001299123456", "BE62510007547061", "BA391290079401028494", "BG80BNBG96611020345678", "HR1210010051863000160", "CY17002001280000001200527600", "CZ6508000000192000145399", "DK5000400440116243", "EE382200221020145685", "FO9754320388899944", "FI2112345600000785", "FR1420041010050500013M02606", "GE29NB0000000101904917", "DE89370400440532013000", "GI75NWBK000000007099453", "GR1601101250000000012300695", "GL5604449876543210", "HU42117730161111101800000000", "IS140159260076545510730339", "IE29AIBK93115212345678", "IL620108000000099999999", "IT40S0542811101000000123456"]
 
-main = print (all (iban) validIbans)
+faultyIbans = [reverse x | x <- validIbans]
+
+testR3 :: [String] -> Bool
+testR3 ibanNumber = all (iban) ibanNumber
+
+checkBatch7 :: IO()
+checkBatch7 = do
+    print("Testing valid IBANS")
+    print(testR3 validIbans)
+    print("Testing faulty IBANS")
+    print(not(testR3 faultyIbans))
+
+-- Result 7:
+-- main = print (all (iban) validIbans)
+-- main = checkBatch7
+
+
+ = print("Please check individual excercises for the results by uncommenting the appropriate lines of code")
