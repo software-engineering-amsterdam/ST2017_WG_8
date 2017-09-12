@@ -28,8 +28,8 @@ second x = even x || x > 3
 
 third :: Int -> Bool
 third x = (even x && x > 3) || even x
---fourth is the same as third
---"even" property is already implemented. but its basically (\x -> mod x 2 == 0)
+-- fourth is the same as third
+-- "even" property is already implemented. but its basically (\x -> mod x 2 == 0)
 
 main = print "Descending list of properties accordingly to their strength: [first, third, even, second]"
 -- time: 30 minutes
