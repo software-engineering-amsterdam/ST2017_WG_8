@@ -76,4 +76,4 @@ main = testProps 0 100 prop1     -- Testing a property without quickCheck
 
 -- Ordered list of properties by their strength (descending): prop2, prop3, prop1
 
--- time: 45 minutes for now
+-- time: 45 minutes

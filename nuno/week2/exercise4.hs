@@ -1,3 +1,5 @@
+module Lab2 where
+
 import Data.List
 import Data.Char
 import System.Random
@@ -61,4 +63,6 @@ main = testProps 0 100 prop1     -- Testing a property without quickCheck
 -- You may assume that your input lists do not contain duplicates. What does this mean for your testing procedure?
 --          It means I dont have to test situations where I have duplicates in a list.
 
--- time: 35 minutes for now
+-- Ordered list of properties by strength (descendent): prop1, prop2, prop3
+
+-- time: 40 minutes

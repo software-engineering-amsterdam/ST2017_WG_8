@@ -10,6 +10,9 @@ infix 1 -->
 (-->) :: Bool -> Bool -> Bool
 p --> q = (not p) || q
 
+forall :: [a] -> (a -> Bool) -> Bool
+forall = flip all
+
 probs :: Int -> IO [Float]
 probs 0 = return []
 probs n = do
@@ -62,3 +65,45 @@ isIsosceles a b c = a==b || a==c || b==c
 --
 isRectangular :: Integer -> Integer -> Integer -> Bool
 isRectangular a b c = a^2+b^2==c^2 || a^2+c^2==b^2 || b^2+c^2==a^2
+
+
+--Assignment 3: Time: 2 hours
+stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
+stronger xs p q = forall xs (\ x -> p x --> q x)
+weaker   xs p q = stronger xs q p
+
+--(\ x -> even x && x > 3) even
+--(\ x -> even x || x > 3) even
+--(\ x -> (even x && x > 3) || even x) even
+--even (\ x -> (even x && x > 3) || even x)
+firstProp :: Int -> Bool
+firstProp x = even x && x > 3
+
+secondProp :: Int -> Bool
+secondProp x = even x || x > 3
+
+thirdProp :: Int -> Bool
+thirdProp x = (even x && x > 3) || even x
+
+fourthProp :: Int -> Bool
+fourthProp x = mod x 2 == 0
+
+
+--Assignment 4: Time: 1 hours
+isPermutation :: Eq a => [a] -> [a] -> Bool
+isPermutation xs ys = xs `elem` (permutations ys)
+
+testPermutations = do
+	putStr "isPermutation [11, 33, 22, 22] [11, 22, 33]? " 
+	putStrLn (show(isPermutation [11, 33, 22, 22] [11, 22, 33]))
+	putStr "isPermutation [1, 3, 2] [1, 2, 3]? "
+	putStrLn (show(isPermutation [1, 3, 2] [1, 2, 3]))
+	putStr "isPermutation [2, 4, 4] [ 2, 4, 6]? "
+	putStrLn (show(isPermutation [2, 4, 4] [2, 4, 6]))
+	putStr "isPermutation [5, 8, 4] [4, 5, 8]? "
+	putStrLn (show(isPermutation [5, 8, 4] [4, 5, 8]))    
+	putStr "isPermutation [5, 7, 2] [1, 2, 3]? "
+	putStrLn (show(isPermutation [5, 7, 2] [1, 2, 3]))
+
+
+--Assignment 5: Time: 
