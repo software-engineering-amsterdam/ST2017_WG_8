@@ -87,3 +87,20 @@ thirdProp x = (even x && x > 3) || even x
 
 fourthProp :: Int -> Bool
 fourthProp x = mod x 2 == 0
+
+
+--Assignment 4: Time: 1 hours
+isPermutation :: Eq a => [a] -> [a] -> Bool
+isPermutation xs ys = xs `elem` (permutations ys)
+
+testPermutations = do
+    putStr "- isPermutation [5, 7, 2] [1, 2, 3] : "
+    putStrLn (show(isPermutation [5, 7, 2] [1, 2, 3]))
+    putStr "- isPermutation [5, 8, 4] [4, 5, 8] : "
+    putStrLn (show(isPermutation [5, 8, 4] [4, 5, 8]))
+    putStr "- isPermutation [2, 4, 4] [ 2, 4, 6] : "
+    putStrLn (show(isPermutation [2, 4, 4] [2, 4, 6]))
+    putStr "- isPermutation [1, 3, 2] [1, 2, 3] : "
+    putStrLn (show(isPermutation [1, 3, 2] [1, 2, 3]))
+    putStr "- isPermutation [11, 33, 22, 22] [11, 22, 33] : "
+    putStrLn (show(isPermutation [11, 33, 22, 22] [11, 22, 33]))
