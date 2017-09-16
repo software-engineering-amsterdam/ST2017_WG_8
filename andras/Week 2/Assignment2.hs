@@ -149,8 +149,9 @@ Order from strongest to weakest
 Strong
 ---------------------
 (\ x -> even x && x > 3)
+(\ x -> (even x && x > 3) || even x) 
+even
 (\ x -> even x || x > 3)
-(\ x -> (even x && x > 3) || even x), even
 ---------------------
 Weak
 -}
