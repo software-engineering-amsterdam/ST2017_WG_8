@@ -17,8 +17,8 @@ isDerangement :: Eq a => [a] -> [a] -> Bool
 isDerangement xs ys = isPermutation xs ys && and (zipWith (/=) xs ys)
 
 -- Create a list with derangement lists
-deranList :: Eq a => [a] -> [[a]]
-deranList xs = filter (\ys -> isDerangement xs ys) (permutations xs)
+deran :: Eq a => [a] -> [[a]]
+deran xs = filter (\ys -> isDerangement xs ys) (permutations xs)
 
 -- Properties
 -- A list can't be its own derangement
@@ -43,4 +43,6 @@ checkProps5 :: Ord a => [a] -> [a] -> Bool
 checkProps5 xs ys = and [prop51 xs ys, prop52 xs ys, prop53 xs ys, prop54 xs ys]
 
 -- Result 5:
+-- main = print(isDerangement <list> <list>)
+-- main = print(deran <list>)
 -- main = quickCheck checkProps5
