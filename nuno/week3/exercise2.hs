@@ -1,5 +1,5 @@
 module Lab3 where
-    
+
 import Data.List
 import System.Random
 import Lecture3
@@ -47,3 +47,4 @@ testParse k n f r = if k == n then print (show n ++ " tests passed")
 main = testParse 0 100 parse formEqualStr
 
 -- time: 1h20
+-- TODO: Test with invalid examples too!
