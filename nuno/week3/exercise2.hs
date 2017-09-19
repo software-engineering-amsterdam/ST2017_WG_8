@@ -1,8 +1,8 @@
+module Lab3 where
+    
 import Data.List
 import System.Random
 import Lecture3
-
--- 10:15
 
 getRandomInt :: Int -> IO Int
 getRandomInt n = getStdRandom (randomR (0,n))
@@ -45,3 +45,5 @@ testParse k n f r = if k == n then print (show n ++ " tests passed")
                   else error ("failed: " ++ show form)
 
 main = testParse 0 100 parse formEqualStr
+
+-- time: 1h20
