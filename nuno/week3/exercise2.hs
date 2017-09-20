@@ -44,7 +44,13 @@ testParse k n f r = if k == n then print (show n ++ " tests passed")
                     testParse (k+1) n f r
                   else error ("failed: " ++ show form)
 
-main = testParse 0 100 parse formEqualStr
+testInvalid :: Bool
+testInvalid = all (\x -> (parse x) == []) ["*+(1 2)", "(1 ==> 2", "*( +(1 2) +(1 3 )" , "(1 <=> <=> 2)", "-*-(1 2)", "(1 2 <=> 3)"]
 
--- time: 1h20
--- TODO: Test with invalid examples too!
+main = do print "Testing with valid examples"
+          testParse 0 100 parse formEqualStr
+          print "Testing with invalid examples"
+          print ("All tests passed: "++(show testInvalid))
+
+
+-- time: 1h30
