@@ -6,7 +6,7 @@ import Lecture3
 
 
 ----------------------------------------------------------
--- 1)
+-- 1) Time spent ~ 1 hour
 
 
 contradiction :: Form -> Bool
@@ -49,7 +49,7 @@ checkBatch1 = do
 -- main = checkBatch1
 
 ----------------------------------------------------------
--- 2)
+-- 2) Time spent ~ 2 hours
 
 -- To test parse I generate formulas from an [Int], this way parse can be tested with an arbitrary number of random formulas generated
 
@@ -119,7 +119,7 @@ checkParse = do
 -- main = checkParse
 
 ----------------------------------------------------------
--- 3)
+-- 3) Time spent ~ 1 hour 
 
 -- Functions reused from previous excercise/lecture: arrowfree, nnf, parse, makeFormula, equiv, genListOfParse
 
@@ -150,9 +150,9 @@ toCNF f = (nnf . arrowfree) f
 -- main = toCNF <Form>
 
 ----------------------------------------------------------
--- 4)
+-- 4) Time spent ~ 40 minutes (most of the work was done already in the previous exercises)
 
--- Functions reused from previous excercise: toCNF, arrowProperty, nnfProperty
+-- Functions reused from previous excercise: toCNF, arrowProperty, nnfProperty, parse, makeFormula, genListOfParse
 
 -- A random formula generation function was implemented in excercise 2, I'll focus on a CNF specific implementation of it in this exercise
 
