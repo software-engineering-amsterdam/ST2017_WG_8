@@ -101,11 +101,11 @@ checkFormula = do
 
 
 -- Limit quickCheck to a list of numbers between 0 and 4 ()
-genPos :: Gen Int
-genPos = abs `fmap` (arbitrary :: Gen Int) `suchThat` (\x -> (x >= 0 && x < 5))
+genParse :: Gen Int
+genParse = choose (0, 4)
 
-genListOfPos :: Gen [Int]
-genListOfPos = listOf genPos
+genListOfParse :: Gen [Int]
+genListOfParse = listOf genParse
 
 -- parse works as expected if for any random, valid formula the output will only contain one element, the correctly parsed formula 
 parseProperty :: [Int] -> Property
@@ -113,7 +113,7 @@ parseProperty xs = length xs < 30 ==> length (parse (makeFormula xs)) == 1
 
 checkParse :: IO()
 checkParse = do
-    quickCheck $ forAll genListOfPos $ parseProperty
+    quickCheck $ forAll genListOfParse $ parseProperty
 
 -- Result 2:
 -- main = checkParse
@@ -121,14 +121,15 @@ checkParse = do
 ----------------------------------------------------------
 -- 3)
 
--- Check if arrowfree fulfills the postconditions
+-- Functions reused from previous excercise/lecture: arrowfree, nnf, parse, makeFormula, equiv, genListOfParse
 
+-- Check if arrowfree fulfills the postconditions (length is limited for runtimpe perforamnce improvement)
 arrowProperty :: [Int] -> Property
 arrowProperty xs = length xs < 30 ==> not(elem '=' $ (show . arrowfree . head . parse . makeFormula) xs) && equiv ((head . parse . makeFormula) xs) ((arrowfree . head . parse . makeFormula) xs )
 
 checkArrowfree :: IO()
 checkArrowfree = do
-    quickCheck $ forAll genListOfPos $ arrowProperty
+    quickCheck $ forAll genListOfParse $ arrowProperty
 
 -- Check if nnf fulfills the postconditions
 nnfProperty :: [Int] -> Property
@@ -136,17 +137,43 @@ nnfProperty xs = length xs < 30 ==> not(isInfixOf "-(" $ (show . nnf . arrowfree
 
 checkNnf :: IO()
 checkNnf = do
-    quickCheck $ forAll genListOfPos $ nnfProperty
+    quickCheck $ forAll genListOfParse $ nnfProperty
 
+
+-- Since we know arrowfree and nnf works as expected and fulfill all pre- and postconditions of the CNF conversion, we can assume that this function will work as expected too 
 toCNF :: Form ->  Form
 toCNF f = (nnf . arrowfree) f
 
-stringToCNF :: String -> Form
-stringToCNF s = (toCNF . head . parse) s
-
+-- Result 3:
+-- main checkArrofree
+-- main checkNnf
+-- main = toCNF <Form>
 
 ----------------------------------------------------------
 -- 4)
 
+-- Functions reused from previous excercise: toCNF, arrowProperty, nnfProperty
 
-main = checkNnf
+-- A random formula generation function was implemented in excercise 2, I'll focus on a CNF specific implementation of it in this exercise
+
+-- Property 1: a CNF version of a formula is equivalent to the original formula
+cnfProperty1 :: [Int] -> Property
+cnfProperty1 xs = length xs < 30 ==> equiv ((toCNF . head . parse . makeFormula) xs) ((head . parse . makeFormula) xs) 
+
+-- Property 2: a CNF version of a formula can only negate atoms
+cnfProperty2 :: [Int] -> Property
+cnfProperty2 xs = length xs < 30 ==> not(isInfixOf "-(" $ (show . toCNF . head . parse . makeFormula) xs) 
+
+-- Property 3: a CNF version of a formula can't contain arrows (entailment or equivalence)
+cnfProperty3 :: [Int] -> Property
+cnfProperty3 xs = length xs < 30 ==>  not(isInfixOf "=" $ (show . toCNF . head . parse . makeFormula) xs) 
+
+checkCnf :: IO()
+checkCnf = do
+    quickCheck $ forAll genListOfParse $ cnfProperty1
+    quickCheck $ forAll genListOfParse $ cnfProperty2
+    quickCheck $ forAll genListOfParse $ cnfProperty3
+
+-- main = checkCnf
+
+main = print("Please check individual excercises for the results by uncommenting the appropriate lines of code")
