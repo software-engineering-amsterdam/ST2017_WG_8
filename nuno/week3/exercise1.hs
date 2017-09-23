@@ -24,5 +24,11 @@ checkEntails2 = entails p (Dsj [p, q])              -- For all valuations where 
 checkEquiv = equiv p p                              -- P is equivalent to P
 checkEquiv2 = equiv (Dsj [p, q]) (Dsj [q, p])       -- (P OR Q) is equivalent to (Q OR P)
 
-main = print (checkEquiv2)
--- Time: 25 minutes for now
+main = do print (checkContradiction)
+          print (checkTautology)
+          print (checkEntails1)
+          print (checkEntails2)
+          print (checkEquiv)
+          print (checkEquiv2)
+
+-- Time: 30 minutes
