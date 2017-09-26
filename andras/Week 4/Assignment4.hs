@@ -21,6 +21,8 @@ genListOfLimit = listOf genLimit
 
 ------------------------------------------------------------------
 -- 2) Time spent ~ 45 minutes
+-- TODO: Fix runDataGen1 to test properties
+
 
 getRandomInt :: Int -> IO Int
 getRandomInt n = getStdRandom (randomR (0,n))
@@ -79,8 +81,8 @@ runDataGen2 = do
 -- main = runDataGen2
 
 ------------------------------------------------------------------
--- 3)
-
+-- 3) Time spent ~ 1 hour
+-- Add own testing 
 
 -- To calculate the lenght we use the fact that a set will only be a subset of its first n elements if n == length(set) 
 setLength :: Ord a => Set a -> Int
@@ -89,6 +91,11 @@ setLength s = (setLengthN s 0)
 setLengthN :: Ord a => Set a -> Int -> Int
 setLengthN s n = if subSet s (takeSet n s) then n else setLengthN s (n+1) 
 --setLengthN s 10000 = -1 -- Set a limit just in case of an infinite recursion
+
+
+set2List :: Set a -> [a]
+set2List (Set []) = []
+set2List (Set xs) = xs
 
 
 intersectSet :: (Ord a) => Set a -> Set a -> Set a 
@@ -112,8 +119,22 @@ differenceSetN set1 set2 set3 0 = set3
 differenceSetN (Set (x:xs)) set2 set3 n = if not(inSet x set2) then differenceSetN (Set (xs)) set2 (insertSet x set3) (n-1) else differenceSetN (Set (xs)) set2 set3 (n-1) 
 
 
---setOperationProperty1 :: Ord a =>  Set a -> Set a -> Bool
---setOperationProperty1
+-- The intersection and the difference of two sets can't have any common members
+setOperationProperty1 :: Ord a =>  Set a -> Set a -> Bool
+setOperationProperty1 set1 set2 =  not $ any(\x -> elem x (set2List (differenceSet set1 set2)) ) (set2List (intersectSet set1 set2))
+
+-- All elements of set1 and set2 are elements of (set1 ∨ set2)
+setOperationProperty2 :: Ord a =>  Set a -> Set a -> Bool
+setOperationProperty2 set1 set2 =  all(\x -> elem x (set2List (unionSet set1 set2)) ) (set2List set1) && all(\x -> elem x (set2List (unionSet set1 set2)) ) (set2List set2)
+
+
+runSetOperationTests :: IO()
+runSetOperationTests = do
+    quickCheck (\x y -> setOperationProperty1 (seedToSet x) (seedToSet y))
+    quickCheck (\x y -> setOperationProperty2 (seedToSet x) (seedToSet y))
+
+-- Result 5:
+-- main = runSetOperationTestst
 
 ------------------------------------------------------------------
 -- 4)
@@ -124,8 +145,14 @@ differenceSetN (Set (x:xs)) set2 set3 n = if not(inSet x set2) then differenceSe
 
 type Rel a = [(a,a)]
 
+-- symClos of r is the same as (r ∨ {(x, y) : (y, x) E r})
 symClos :: Ord a => Rel a -> Rel a
-symClos r = r
+symClos r = r ++ symClosN r [] (length(r))
+
+-- We parse through the elements of r and every (y, x) to r2 where (x, y) is the element of r but (y, x) isn't. Once we're done parsing we return r2 to be appended to r
+symClosN :: Ord a => Rel a -> Rel a -> Int -> Rel a
+symClosN r1 r2 0 = r2
+symClosN ((x, y):xys) r2 n = if not(x == y) && not(elem (y, x) xys) then symClosN xys (r2 ++ [(y, x)]) (n-1) else symClosN xys r2 (n-1)
 
 ------------------------------------------------------------------
 -- 6)
@@ -146,4 +173,4 @@ r @@ s =
 
 
 
-main = print(differenceSet (Set [1, 2, 3, 4]) (Set [1, 2, 5, 6]))
+main = print(symClos [(1,2),(2,3),(3,4),(2,2)])
