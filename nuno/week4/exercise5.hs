@@ -13,6 +13,7 @@ insertList x ys@(y:ys') = case compare x y of
                                  EQ -> ys 
                                  _  -> x : ys 
 
+-- Just add the pair (y,x) for each (x,y) if its not in the pairs list already
 symClos :: Ord a => Rel a -> Rel a
 symClos pairs = symClos' pairs pairs where
     symClos' [] pairs = pairs
