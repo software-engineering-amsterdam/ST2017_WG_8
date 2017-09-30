@@ -5,6 +5,7 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 
+--Assignment 3: Time: 5 hours
 intersectionSet :: Ord a => Set a -> Set a -> Set a
 intersectionSet (Set []) _ = Set []
 intersectionSet _ (Set []) = Set []
