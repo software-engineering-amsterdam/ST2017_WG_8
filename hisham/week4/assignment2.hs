@@ -5,7 +5,7 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 
---Assignment 2: Time:
+--Assignment 2: Time: 4 hours
 
  -- Returns a random IO Int from a given Int tuple 
 nRandom :: (Int, Int) -> IO Int
