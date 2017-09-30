@@ -35,7 +35,7 @@ instance Arbitrary (Set Int) where
     arbitrary = list2set <$> lst where 
         lst = getOrdered <$> arbitrary
 
--- A few canges so the function takes 2 sets instead of one.
+-- A few twists so the function takes 2 sets instead of one.
 testProps :: Int -> Int -> (Set Int -> Set Int -> Bool) -> IO ()
 testProps k n f = if k == n then print (show n ++ " tests passed")
                 else do
@@ -59,41 +59,51 @@ difference :: Ord a => Set a -> Set a -> Set a
 difference (Set []) _ = emptySet
 difference (Set (s:s1)) s2 = if not (inSet s s2) then insertSet s (difference (Set s1) s2) else difference (Set s1) s2
 
-identityProp :: Set Int -> Bool
-identityProp s = unionSet s emptySet == s
-
-dominationProp :: Set Int -> Bool
-dominationProp s = intersection s emptySet == emptySet
-
 -- commutative Union(A, B) = Union(B, A)
-comutUnionProp :: Set Int -> Set Int -> Bool
-comutUnionProp a b = unionSet a b == unionSet b a
+unionProp1 :: Set Int -> Set Int -> Bool
+unionProp1 a b = unionSet a b == unionSet b a
+
+-- Every element in A should be in Union(A,B)
+unionProp2 :: Set Int -> Set Int -> Bool
+unionProp2 (Set a) b = all (\x -> inSet x (unionSet (Set a) b)) a
+
+-- Every element in B should also be an element of Union(A,B)
+unionProp3 :: Set Int -> Set Int -> Bool
+unionProp3 a (Set b) = all (\x -> inSet x (unionSet a (Set b))) b
 
 -- commutative Intersection Intersection(A, B) = Intersection(B, A)
-comutIntersectionProp :: Set Int -> Set Int -> Bool
-comutIntersectionProp a b = intersection a b == intersection b a
+intersectProp1 :: Set Int -> Set Int -> Bool
+intersectProp1 a b = intersection a b == intersection b a
 
--- A U (B U C) == (A U B) U C
-associativityProp1 :: Set Int -> Set Int -> Set Int -> Bool
-associativityProp1 a b c = unionSet a (unionSet b c) == unionSet (unionSet a b) c
+-- Every element of Intersection(A,B) should be an element of A and B
+intersectProp2 :: Set Int -> Set Int -> Bool
+intersectProp2 a b = all (\x -> inSet x a && inSet x b) intersect where
+  Set (intersect) = intersection a b
 
--- A ^ (B ^ C) == (A ^ B) ^ C
-associativityProp2 :: Set Int -> Set Int -> Set Int -> Bool
-associativityProp2 a b c = intersection a (intersection b c) == intersection (intersection a b) c
+-- Every element in Difference(A,B) should be an element of A and not an element of B
+differenceProp1 :: Set Int -> Set Int -> Bool
+differenceProp1 a b = all (\x -> inSet x a && not (inSet x b)) diff where
+  Set (diff) = difference a b
 
--- A U (B ^ C) = (A U B) ^ (A U C)
-distributivityProp1 :: Set Int -> Set Int -> Set Int -> Bool
-distributivityProp1 a b c = unionSet a (intersection b c) == intersection (unionSet a b) (unionSet a c)
+-- Alternately test with my own test generator and with quickCheck
+main = do print "Testing union commutativity"
+          testProps 0 100 unionProp1
+          quickCheck unionProp1
+          print "Testing union prop2"
+          testProps 0 100 unionProp2
+          quickCheck unionProp2
+          print "Testing union prop3"
+          testProps 0 100 unionProp3
+          quickCheck unionProp3
+          print "Testing intersection commutativity"
+          testProps 0 100 intersectProp1
+          quickCheck intersectProp1
+          print "Testing if all elements of an intersection also belong to both of the original sets"
+          testProps 0 100 intersectProp2
+          quickCheck intersectProp2
+          print "Testing if all elements of a difference between sets A and B are elements of A and not of B"
+          testProps 0 100 differenceProp1
+          quickCheck differenceProp1
 
--- A ^ (B U C) = (A ^ B) U (A ^ C)
-distributivityProp2 :: Set Int -> Set Int -> Set Int -> Bool
-distributivityProp2 a b c = intersection a (unionSet b c) == unionSet (intersection a b) (intersection a c)
 
-main = quickCheck distributivityProp2
---main = print (intersection (list2set [1,2,3]) (list2set [2,3,4])) -- Should return {2,3}
---main = print (difference (list2set [1,2,3]) (list2set [2,3,4])) -- Should return {1}
-
--- time: 40 minutes
-
--- TODO: my own generator giving different arguments accordingly to the function???
--- Make a main with do all tests
+-- time: 55 minutes
