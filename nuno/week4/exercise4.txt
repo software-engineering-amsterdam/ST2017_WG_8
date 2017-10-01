@@ -1,7 +1,4 @@
-tree or root r --> page 169
+Didn't get the proof that R+ is transitive --> page 172 at the end
+	More specifically, why does it follow that R^k+m(x,z) from R^k(x,y) and R^m(y,z)
 
-Didn't get the proof that R+ is transitive --> page 172
-
-Proposition 5.65
-
-Equivalence classes...
+time: 3h30
