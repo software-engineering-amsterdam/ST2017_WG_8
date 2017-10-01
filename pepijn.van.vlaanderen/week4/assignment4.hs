@@ -36,7 +36,7 @@ genIntSet = do
     return (list2set xs)
 
 {-
-Exercise 3
+Exercise 3 (~1 hour)
 Make use of intersect and difference operator from List module.
 -}
 -- unionSet already exists in SetOrd, alternate implementation:
@@ -92,7 +92,12 @@ main2 = do
         testProp differenceProp1 0 10
 
 {-
-Exercise 5
+Exercise 4 (~3 hours)
+-}
+-- 
+
+{-
+Exercise 5 (~30 mins)
 -}
 type Rel a = [(a,a)]
 
