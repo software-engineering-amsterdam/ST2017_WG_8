@@ -1,0 +1,4 @@
+--Assignment 4: Time: 5 hours
+
+Q- The meaning of the delta symbol on excercise 5.35?
+Q- What makes the reflexive closure different than reflexivity?

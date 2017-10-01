@@ -1,0 +1,5 @@
+--Assignment 1: Time: 4 hours
+
+Q- The Russell Paradox is unclear to me.
+Q- Example 4.6, Exercise 4.7?
+Q- The first five levels of the set theoretic hierarchy. When is it useful?
