@@ -1,17 +1,5 @@
-time unil now: 4 hours
+Example 4.6 (paradoxes) is very confusing
 
-"Notions are split up in two analogous categories. Their meaning may have been
-explained by definitions in terms of other notions. However, the process of defining
-notions must have a beginning somewhere. Thus, the need for notions that are
-primitive, i.e., undefined."
+What is the purpose of knowing the levels of the set theoretic hierarchy? Its mentioned on page 156
 
-Example 4.6 (paradoxes) Very confusing
-
-Remark. Abstraction and Restricted Quantification. (Before 4.4 Algebra of sets)
-
-Definition 4.24
-
-4.6 Lists and List Operations. Couldnt understand stuff in the beginning
-
-why do they need the First Five Levels of the Set Theoretic Universe and where is it used (its right before the end)
-
+time: 4h30
