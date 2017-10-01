@@ -7,6 +7,13 @@ import Test.QuickCheck
 import SetOrd
 
 {-
+Exercise 1 (~3 hours)
+-}
+-- Q1: Is there also a good explanation of the Russel paradox? And why it is useful to know regarding functional programming?
+-- Q2: In Haskell there are the functions 'fst' and 'snd', to get the first or second element of a tuple. Isn't there are more general Haskell function to get the element on a specific index of a pair, triples, etc.?
+-- Q3: What is the relevance of showing that ∅ /= {∅}. And that {∅} /= {{∅}}?
+
+{-
 Exercise 2 (~1 hour)
 -}
 getRandomInt :: Int -> IO Int
