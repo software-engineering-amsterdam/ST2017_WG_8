@@ -91,5 +91,17 @@ type Rel a = [(a,a)]
 
 -- use swap from data.Tuple
 symClos :: Ord a => Rel a -> Rel a
-symClos [] = []
-symClos (x:xs) = [x, swap x] ++ symClos xs
+symClos x = sort $ x ++ map swap x
+
+main3 = symClos [(1,2),(2,3),(3,4)]
+
+{-
+Exercise 6
+-}
+infixr 5 @@
+
+(@@) :: Eq a => Rel a -> Rel a -> Rel a
+r @@ s =
+  nub [ (x,z) | (x,y) <- r, (w,z) <- s, y == w ]
+
+--trClos :: Ord a => Rel a -> Rel a
