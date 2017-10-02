@@ -1,0 +1,8 @@
+-- Q1: What is the meaning of the delta symbol on excercise 5.35?
+
+-- Q2: What makes the reflexive closure different than reflexivity?
+
+-- Q3: Didn't get the proof that R+ is transitive --> page 172 at the end.
+More specifically, why does it follow that R^k+m(x,z) from R^k(x,y) and R^m(y,z)
+
+time: 4h30

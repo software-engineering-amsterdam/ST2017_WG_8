@@ -1,0 +1,11 @@
+-- Q1: Is there also a good explanation of the Russel paradox? And why it is useful to know regarding functional programming?
+
+-- Q2: In Haskell there are the functions 'fst' and 'snd', to get the first or second element of a tuple. Isn't there are more general Haskell function to get the element on a specific index of a pair, triples, etc.?
+
+-- Q3: What is the relevance of showing that ∅ /= {∅}. And that {∅} /= {{∅}}?
+
+-- @4: Example 4.6 (paradoxes) is very confusing
+
+-- Q5: What is the purpose of knowing the levels of the set theoretic hierarchy? Its mentioned on page 156
+
+time: 4h30
