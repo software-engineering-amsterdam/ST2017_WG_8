@@ -1,7 +1,4 @@
 
-module Lecture5
-
-where 
 
 import Data.List
 import System.Random
@@ -347,14 +344,14 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
---main :: IO ()
---main = do [r] <- rsolveNs [emptyN]
-  --        showNode r
-  --        s  <- genProblem r
-  --        showNode s
-
+testSudoku :: Int -> IO()
+testSudoku 0 = print "Done"
+testSudoku n = do r <- genRandomSudoku
+                  s <- genProblem r
+                  print ("Generating and solving sudoku nr"++show n)
+                  showSudoku (fst s) -- Sudoku to solve
+                  showSudoku (fst (head (solveNs [s]))) -- Solved sudoku
+                  putStr "\n\n"
+                  testSudoku (n-1)
 main :: IO()
-main = do r <- genRandomSudoku
-          s <- genProblem r
-          showNode r
-          showNode s
+main = testSudoku 10

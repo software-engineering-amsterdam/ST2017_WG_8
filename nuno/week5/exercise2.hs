@@ -317,20 +317,26 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
+testSudoku :: Int -> IO()
+testSudoku 0 = print "Done"
+testSudoku n = do r <- genRandomSudoku
+                  s <- genProblem r
+                  print ("Generating and solving sudoku nr"++show n)
+                  showSudoku (fst s) -- Sudoku to solve
+                  showSudoku (fst (head (solveNs [s]))) -- Solved sudoku
+                  putStr "\n\n"
+                  testSudoku (n-1)
 main :: IO()
-main = do r <- genRandomSudoku
-          s <- genProblem r
-          showNode r
-          showNode s
+main = testSudoku 10
 
--- This refactored code is much more flexible for changes in the restrictions because we only need to change one line of code and add a few
+-- The refactored code is much more flexible for changes in the restrictions because we only need to change the code in one place to add restrictions
     -- Basically we need to change allConstrnt to become rowConstrnt ++ columnConstrnt ++ blockConstrnt ++ blockNrcConstrnt)
     -- where blockNrcConstrnt is [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocksNrc, b2 <- blocksNrc ]
     -- where blocksNrc = [[2..4],[6..8]]
 -- On the original code we had to change every piece of code that was checking the restrictions. That requires a lot of searching and a lot of bugs introduced
 
--- TODO: profiler. make 1 main for each of the implementations where you generate like 10 random sudokus, from those 10 you generate 
--- 10 problems and then you solve those 10 problems. Why 10 and not 1? because solving one sudoku might take much more time than solving a different one. By solving 10
--- problems each we account for that problem.
-
--- time: 1 hour for now
+-- The original code is much more efficient than the refactored code (considering both time and space efficiency).
+-- The profiling of both implementations is included in the files "exercise2Profiling" and "lecture5Profiling" where we
+--       can see that the refactored code (exercise2) uses twice more memory than lecture5 when generating and solving 10 sudoku problems. Also,
+--       while the refactored code toke 9.670s to run, the original implementation only needed 2.048s.
+-- time: 1h30m
