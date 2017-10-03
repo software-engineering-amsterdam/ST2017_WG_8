@@ -1,5 +1,5 @@
 
-module Lecture5
+module Lab5
 
 where 
 

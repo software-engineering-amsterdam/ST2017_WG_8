@@ -1,4 +1,7 @@
 
+module Lecture5
+
+where 
 
 import Data.List
 import System.Random
@@ -353,5 +356,5 @@ testSudoku n = do r <- genRandomSudoku
                   showSudoku (fst (head (solveNs [s]))) -- Solved sudoku
                   putStr "\n\n"
                   testSudoku (n-1)
-main :: IO()
-main = testSudoku 10
+--main :: IO()
+--main = testSudoku 10
