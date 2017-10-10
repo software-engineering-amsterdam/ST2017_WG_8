@@ -222,6 +222,8 @@ exM _ _ 1 = 0
 exM x 0 n = 1
 exM x y n = if mod y 2 == 0 then let res = exM x (quot y 2) n in mod (res*res) n else mod (x * (exM x (y-1) n)) n
 
+-- time: 45 minutes
+
 ----------------------------------------
 
 -- Exercise 2
@@ -250,6 +252,7 @@ testExM f k = do  x <- getRandomInt 1000000
 -- In addition to being more time efficient, we can see that this function is also more efficient when it comes to memory usage,
 --     because it only allocates around 14,063,008 bytes allocated in the heap when running (much less than the original).
 
+-- time: 1 hour
 ----------------------------------------
 
 -- Exercise 3
@@ -258,6 +261,8 @@ testExM f k = do  x <- getRandomInt 1000000
 -- (1 is not a composite because it only has one factor)
 composites :: [Integer]
 composites = filter (not.prime) [2..]
+
+-- time: 5 minutes
 
 ----------------------------------------
 
@@ -278,6 +283,8 @@ main4 = do testPrimes primeTestsF 1  composites
            testPrimes primeTestsF 10 composites
            testPrimes primeTestsF 20 composites
            testPrimes primeTestsF 30 composites
+
+--time: 1 hour
 
 -----------------------------------------
 
@@ -305,6 +312,8 @@ main5 = do testPrimes primeTestsF 1  carmichael
            testPrimes primeTestsF 20 carmichael
            testPrimes primeTestsF 30 carmichael
            print (take 5 carmichael)
+
+--time: 30 minutes
 
 ------------------------------------------
 
@@ -340,6 +349,8 @@ largeMRPrime n = do p <- largeMRPrime' [x | x <- primes, x > toInteger n]
 -- 446087557183758429571151706402101809886208632412859901111991219963404685792820473369112545269003989026153245931124316702395758705693679364790903497461147071065254193353938124978226307947312410798874869040070279328428810311754844108094878252494866760969586998128982645877596028979171536962503068429617331702184750324583009171832104916050157628886606372145501702225925125224076829605427173573964812995250569412480720738476855293681666712844831190877620606786663862190240118570736831901886479225810414714078935386562497968178729127629594924411960961386713946279899275006954917139758796061223803393537381034666494402951052059047968693255388647930440925104186817009640171764133172418132836351
 -- Mersenne prime: yes (exponent = 2281)
 
+-- time: 15 minutes
+
 main62 = do n <- getRandomInt 1000
             p <- largeMRPrime n
             print (2^p - 1)
@@ -348,8 +359,77 @@ main62 = do n <- getRandomInt 1000
             p3 <- largeMRPrime p2
             print (2^p3 - 1)
 
+-- time: 45 minutes
+
+
 -------------------------------------------------------
 
 -- Exercise 7
 
-main = print "exercise7"
+-- Generator with lower bound too
+getRandomInt2 :: Int -> Int -> IO Int
+getRandomInt2 n1 n2 = getStdRandom (randomR (n1,n2))
+
+
+nextPrime :: Integer -> IO Integer
+nextPrime n = do isPrime <- primeMR 2 n
+                 if isPrime then return n 
+                 else do x <- nextPrime (n+1)
+                         return x
+
+-- Generate number with 64*n bits
+--      (based on generating n Ints (64 bits) and multiplying them)
+--      (Actually the numbers are between 2^62 and 2^63 so they only have 63 bits.)
+genBigNumber :: Int -> IO Integer
+genBigNumber 1 = let range = maxBound :: Int in
+                     do x <- getRandomInt2 (quot range 2) range
+                        return (toInteger x)
+genBigNumber n = let range = maxBound :: Int in
+                     do x <- genBigNumber 1
+                        y <- genBigNumber (n-1)
+                        let n = x*y in return n
+
+gen1024BitNumber :: IO Integer
+gen1024BitNumber = genBigNumber (quot 1024 64)
+
+rsaEncodeBlock :: (Integer,Integer) -> [Integer] -> [Integer]
+rsaEncodeBlock pubKey bl = map (rsaEncode pubKey) bl
+
+rsaDecodeBlock :: (Integer,Integer) -> [Integer] -> [Integer]
+rsaDecodeBlock privKey bl = map (rsaDecode privKey) bl
+
+-- Convert a possibly big integer into separate 64bit blocks
+int2Blocks :: Integer -> [Integer]
+int2Blocks 0 = []
+int2Blocks n = [mod n (2^64)] ++ (int2Blocks (quot n (2^64)))
+
+-- Convert several 64-bit blocks into a possibly big integer
+blocks2Int :: [Integer] -> Integer
+blocks2Int [] = 0
+blocks2Int (x:xs) = x + (2^64)*(blocks2Int xs)
+
+main = do n <- gen1024BitNumber
+          p <- nextPrime n
+          q <- nextPrime (p+1)
+          let pubKey = rsaPublic  p q
+              privKey = rsaPrivate p q
+              plaintext = int2Blocks secret
+          print "Secret"
+          print secret
+          print "P"
+          print p
+          print "Q"
+          print q
+          print "Public key"
+          print pubKey
+          print "Private key"
+          print privKey
+          print "Encrypting..."
+          print (blocks2Int (rsaEncodeBlock pubKey plaintext))
+          print "Decrypting..."
+          print (blocks2Int (rsaDecodeBlock privKey (rsaEncodeBlock pubKey plaintext)))
+          if (blocks2Int (rsaDecodeBlock privKey (rsaEncodeBlock pubKey plaintext))) == secret 
+            then print "All good" 
+            else print "Something went wrong"
+
+--time: 2 hours
