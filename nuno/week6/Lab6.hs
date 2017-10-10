@@ -263,20 +263,21 @@ composites = filter (not.prime) [2..]
 
 -- Exercise 4
 
-testPrimes :: Int -> [Integer] -> IO ()
-testPrimes k (x:xs) = do res <- primeTestsF k x
-                         if res then print ("Prime testing with k: " ++ show k ++ " failed on: " ++ show x)
-                         else testPrimes k xs
+-- 1st argument is the primality check to be applied to each number of the list in the 3rd argument
+testPrimes :: (Int -> Integer -> IO Bool) -> Int -> [Integer] -> IO ()
+testPrimes primCheck k (x:xs) = do res <- primCheck k x
+                                   if res then print ("Prime testing with k: " ++ show k ++ " failed on: " ++ show x)
+                                   else testPrimes primCheck k xs
 
 --If we increase k, primeTestsF will get more accurate results, 
 --     therefore the greatest false positive will be a bigger number
---main :: IO ()
---main = do testPrimes 1  composites
---          testPrimes 2  composites
---          testPrimes 3  composites
---          testPrimes 10  composites
---          testPrimes 20 composites
---          testPrimes 30 composites
+main4 :: IO ()
+main4 = do testPrimes primeTestsF 1  composites
+           testPrimes primeTestsF 2  composites
+           testPrimes primeTestsF 3  composites
+           testPrimes primeTestsF 10 composites
+           testPrimes primeTestsF 20 composites
+           testPrimes primeTestsF 30 composites
 
 -----------------------------------------
 
@@ -296,11 +297,59 @@ carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) |
 --     The tests above will probably output one of those numbers. We need k to be a big number in order to 
 --     be minimally accurate for these numbers, but the greater the k, the more time it takes to check the primality of n.
 
-main = do testPrimes 1  carmichael
-          testPrimes 2  carmichael
-          testPrimes 3  carmichael
-          testPrimes 10 carmichael
-          testPrimes 20 carmichael
-          testPrimes 30 carmichael
-          print (take 5 carmichael)
+main5 :: IO ()
+main5 = do testPrimes primeTestsF 1  carmichael
+           testPrimes primeTestsF 2  carmichael
+           testPrimes primeTestsF 3  carmichael
+           testPrimes primeTestsF 10 carmichael
+           testPrimes primeTestsF 20 carmichael
+           testPrimes primeTestsF 30 carmichael
+           print (take 5 carmichael)
 
+------------------------------------------
+
+-- Exercise 6
+
+-- It seems the Miller-Rabin primality check is not weak against Carmichael numbers.
+--    Even for K == 1 the test returns 'Composite' for the first 5 Carmichael numbers the majority of times.
+
+main6 = do testPrimes primeMR 1  carmichael
+           testPrimes primeMR 2  carmichael
+           testPrimes primeMR 3  carmichael
+           -- For k > 3 it takes a lot of time to process
+           print (take 5 carmichael)
+
+largeMRPrime' :: [Integer] -> IO Int
+largeMRPrime' (x:xs) = do isPrime <- primeMR 2 (2^x - 1)
+                          if isPrime then return (fromInteger x)
+                          else do p <- largeMRPrime' xs
+                                  return p
+
+-- MrPrime with exponent > n
+largeMRPrime :: Int -> IO Int
+largeMRPrime n = do p <- largeMRPrime' [x | x <- primes, x > toInteger n]
+                    return p
+
+--       Numbers found with this method (http://primes.utm.edu/mersenne/index.html?id=research&month=primes&day=mersenne&year=index#known) --
+--10407932194664399081925240327364085538615262247266704805319112350403608059673360298012239441732324184842421613954281007791383566248323464908139906605677320762924129509389220345773183349661583550472959420547689811211693677147548478866962501384438260291732348885311160828538416585028255604666224831890918801847068222203140521026698435488732958028878050869736186900714720710555703168729087
+-- Mersenne prime: yes (exponent = 1279)
+--6864797660130609714981900799081393217269435300143305409394463459185543183397656052122559640661454554977296311391480858037121987999716643812574028291115057151
+-- Mersenne prime: yes (exponent = 521)
+-- 531137992816767098689588206552468627329593117727031923199444138200403559860852242739162502265229285668889329486246501015346579337652707239409519978766587351943831270835393219031728127
+-- Mersenne prime: yes (exponent = 607)
+-- 446087557183758429571151706402101809886208632412859901111991219963404685792820473369112545269003989026153245931124316702395758705693679364790903497461147071065254193353938124978226307947312410798874869040070279328428810311754844108094878252494866760969586998128982645877596028979171536962503068429617331702184750324583009171832104916050157628886606372145501702225925125224076829605427173573964812995250569412480720738476855293681666712844831190877620606786663862190240118570736831901886479225810414714078935386562497968178729127629594924411960961386713946279899275006954917139758796061223803393537381034666494402951052059047968693255388647930440925104186817009640171764133172418132836351
+-- Mersenne prime: yes (exponent = 2281)
+
+main62 = do n <- getRandomInt 1000
+            p <- largeMRPrime n
+            print (2^p - 1)
+            p2 <- largeMRPrime p
+            print (2^p2 - 1)
+            p3 <- largeMRPrime p2
+            print (2^p3 - 1)
+
+-------------------------------------------------------
+
+-- Exercise 7
+
+main = print "exercise7"
