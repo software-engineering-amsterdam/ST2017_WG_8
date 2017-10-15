@@ -261,9 +261,11 @@ main2 = do
     timeExM 12321 1234567 12345
     timeExM 12321 12345678 12345
 
--- Profiling of the code shows that the original function allocates aproximately 3,346,062,304 bytes in the heap when executed.
+-- Profiling of the code shows that the original function allocates aproximately 3,346,062,304 bytes in the heap when computing 
+--  1000 integers in the range [1,1000000] with exponents in the range [1,1000000] and modules [1,1000000000]
 
--- The improved function is also more space efficient than the original function because it only allocates 14,063,008 bytes in the heap. 
+-- The improved function is also more space efficient than the original function because it only allocates 14,063,008 bytes in the heap,
+--  in the same situation as before. 
 
 ----------------------------------------
 
@@ -375,7 +377,74 @@ main6b = do n <- getRandomInt 1000
 -------------------------------------------------------
 
 {-
-Exercise 7 (~ minutes)
+Exercise 7 (2~ hours)
 -}
 
-main = print "exercise7"
+-- Generator with lower bound too
+getRandomInt2 :: Int -> Int -> IO Int
+getRandomInt2 n1 n2 = getStdRandom (randomR (n1,n2))
+
+
+nextPrime :: Integer -> IO Integer
+nextPrime n = do isPrime <- primeMR 2 n
+                 if isPrime then return n 
+                 else do x <- nextPrime (n+1)
+                         return x
+
+-- Generate number with 64*n bits
+--      (based on generating n Ints (64 bits) and multiplying them)
+--      (Actually the numbers are between 2^62 and 2^63 so they only have 63 bits.)
+genBigNumber :: Int -> IO Integer
+genBigNumber 1 = let range = maxBound :: Int in
+                     do x <- getRandomInt2 (quot range 2) range
+                        return (toInteger x)
+genBigNumber n = let range = maxBound :: Int in
+                     do x <- genBigNumber 1
+                        y <- genBigNumber (n-1)
+                        let n = x*y in return n
+
+gen1024BitNumber :: IO Integer
+gen1024BitNumber = genBigNumber (quot 1024 64)
+
+rsaEncodeBlock :: (Integer,Integer) -> [Integer] -> [Integer]
+rsaEncodeBlock pubKey bl = map (rsaEncode pubKey) bl
+
+rsaDecodeBlock :: (Integer,Integer) -> [Integer] -> [Integer]
+rsaDecodeBlock privKey bl = map (rsaDecode privKey) bl
+
+-- Convert a possibly big integer into separate 64bit blocks
+int2Blocks :: Integer -> [Integer]
+int2Blocks 0 = []
+int2Blocks n = [mod n (2^64)] ++ (int2Blocks (quot n (2^64)))
+
+-- Convert several 64-bit blocks into a possibly big integer
+blocks2Int :: [Integer] -> Integer
+blocks2Int [] = 0
+blocks2Int (x:xs) = x + (2^64)*(blocks2Int xs)
+
+main7 =do n <- gen1024BitNumber
+          p <- nextPrime n
+          q <- nextPrime (p+1)
+          let pubKey = rsaPublic  p q
+              privKey = rsaPrivate p q
+              plaintext = int2Blocks secret
+          print "Secret"
+          print secret
+          print "P"
+          print p
+          print "Q"
+          print q
+          print "Public key"
+          print pubKey
+          print "Private key"
+          print privKey
+          print "Encrypting..."
+          let enc =  rsaEncodeBlock pubKey plaintext
+          print (blocks2Int enc)
+          print "Decrypting..."
+          print (blocks2Int (rsaDecodeBlock privKey enc))
+          if (blocks2Int (rsaDecodeBlock privKey enc)) == secret 
+            then print "All good" 
+            else print "Something went wrong"
+
+--time: 2 hours
